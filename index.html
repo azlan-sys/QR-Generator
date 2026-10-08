@@ -3,87 +3,92 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Shipment 0721 - Scanner</title>
+  <title>Shipment 0721 - All QRs</title>
   <style>
     :root {
-      --bg: #f8fafc; --panel: #ffffff; --line: #e2e8f0;
+      --bg: #f1f5f9; --panel: #ffffff; --line: #e2e8f0;
       --text: #0f172a; --muted: #64748b; --accent: #0284c7;
-      --accent-soft: #e0f2fe; --good: #16a34a;
+      --accent-soft: #e0f2fe; --good: #16a34a; --good-soft: #dcfce7;
+      --dark: #0f172a;
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); -webkit-tap-highlight-color: transparent; }
 
-    #home { max-width: 900px; margin: 0 auto; padding: 14px 14px 50px; }
-    .brand { display: flex; align-items: center; gap: 10px; padding: 6px 4px 14px; }
-    .brand .logo { width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, #0284c7, #0f172a); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 800; font-size: 20px; flex-shrink: 0; }
-    .brand h1 { font-size: 19px; line-height: 1.2; }
-    .brand .tag { font-size: 12px; color: var(--muted); }
+    .header { position: sticky; top: 0; z-index: 20; background: rgba(15,23,42,.96); backdrop-filter: blur(6px); color: #fff; padding: 12px 16px; box-shadow: 0 2px 12px rgba(0,0,0,.25); }
+    .header h1 { font-size: 18px; }
+    .header .sub { font-size: 12px; color: #94a3b8; }
+    .header .count { font-size: 12px; color: #38bdf8; font-weight: 700; }
 
-    .case-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; }
-    .case-card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; cursor: pointer; transition: border-color .15s, transform .1s; display: flex; align-items: center; gap: 14px; box-shadow: 0 1px 2px rgba(15,23,42,.05); }
-    .case-card:active { transform: scale(.98); }
-    .case-card:hover { border-color: var(--accent); }
-    .case-num { width: 46px; height: 46px; border-radius: 12px; flex-shrink: 0; background: var(--accent-soft); color: var(--accent); font-weight: 800; font-size: 18px; display: flex; align-items: center; justify-content: center; }
-    .case-info { min-width: 0; flex: 1; }
-    .case-code { font-family: 'Courier New', monospace; font-size: 13.5px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .case-meta { font-size: 12px; color: var(--muted); margin-top: 3px; }
-    .case-meta b { color: var(--good); }
-    .home-foot { text-align: center; color: var(--muted); font-size: 12px; margin-top: 26px; }
-    .home-foot b { color: var(--accent); }
+    .wrap { max-width: 980px; margin: 0 auto; padding: 18px 12px 60px; }
+    .legend { text-align: center; font-size: 13px; color: var(--muted); margin-bottom: 20px; line-height: 1.6; }
+    .legend b { color: var(--accent); }
+    .legend .bdg { display: inline-block; background: var(--accent); color: #fff; font-size: 11px; font-weight: 800; padding: 3px 10px; border-radius: 10px; vertical-align: 1px; }
+    .legend .bdg.g { background: var(--good); }
 
-    #detail { display: none; max-width: 1000px; margin: 0 auto; padding: 0 12px 40px; }
-    .detail-top { position: sticky; top: 0; z-index: 10; background: rgba(248,250,252,.95); backdrop-filter: blur(6px); padding: 10px 2px; display: flex; align-items: center; gap: 10px; }
-    .iconbtn { background: #fff; border: 1px solid var(--line); color: var(--text); border-radius: 10px; padding: 9px 14px; cursor: pointer; font-size: 14px; font-weight: 600; flex-shrink: 0; box-shadow: 0 1px 2px rgba(15,23,42,.05); }
-    .iconbtn:hover { border-color: var(--accent); color: var(--accent); }
-    .detail-title { text-align: center; font-size: 15px; font-weight: 700; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .case-block { background: var(--panel); border: 1px solid var(--line); border-radius: 18px; margin-bottom: 22px; overflow: hidden; box-shadow: 0 2px 8px rgba(15,23,42,.06); }
+    .case-head { display: flex; align-items: center; gap: 10px; padding: 14px 18px; background: linear-gradient(135deg, #0f172a, #1e3a5f); color: #fff; }
+    .case-badge { flex: 0 0 auto; background: #0ea5e9; color: #082f49; font-size: 12px; font-weight: 800; letter-spacing: 1px; padding: 5px 12px; border-radius: 12px; text-transform: uppercase; }
+    .case-code { font-family: 'Courier New', monospace; font-size: 15px; font-weight: 700; word-break: break-all; line-height: 1.3; }
+    .case-count { margin-left: auto; flex: 0 0 auto; font-size: 12px; color: #94a3b8; text-align: right; }
+    .case-count b { color: #4ade80; font-size: 16px; }
 
-    .case-banner { background: linear-gradient(135deg, #0f172a, #1e3a5f); color: #fff; border-radius: 16px; padding: 16px; display: flex; align-items: center; gap: 18px; flex-wrap: wrap; margin-bottom: 18px; }
-    .case-banner .qr-card { background: #fff; border-radius: 12px; padding: 10px; flex-shrink: 0; }
-    .case-banner .qr-card img { display: block; width: 180px; height: 180px; border-radius: 4px; image-rendering: pixelated; }
-    .cb-info { flex: 1; min-width: 200px; }
-    .cb-badge { display: inline-block; background: #0ea5e9; color: #082f49; font-size: 11px; font-weight: 800; letter-spacing: 1.5px; padding: 4px 12px; border-radius: 20px; text-transform: uppercase; margin-bottom: 8px; }
-    .cb-code { font-family: 'Courier New', monospace; font-size: 16px; font-weight: 700; word-break: break-all; line-height: 1.3; }
-    .cb-hint { font-size: 12px; color: #94a3b8; margin-top: 8px; }
+    .case-body { padding: 20px 18px; }
+    .case-row { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; padding-bottom: 18px; border-bottom: 1px dashed var(--line); margin-bottom: 16px; }
+    .case-qr { flex: 0 0 auto; }
+    .case-qr img { display: block; width: 200px; height: 200px; border-radius: 8px; border: 2px solid var(--line); image-rendering: pixelated; }
+    .case-qr-label { font-size: 12px; font-weight: 700; color: var(--accent); text-align: center; margin-top: 6px; letter-spacing: .5px; }
+    .case-qr-label .badge { display: inline-block; background: var(--accent); color: #fff; padding: 3px 10px; border-radius: 10px; font-size: 11px; }
+    .case-instructions { flex: 1; min-width: 220px; color: var(--muted); font-size: 13px; line-height: 1.7; }
+    .case-instructions b { color: var(--text); }
 
-    .section-title { font-size: 14px; font-weight: 700; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin: 18px 0 10px; }
-    .section-title b { color: var(--good); }
-    .parts-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
-    .part-card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 14px; text-align: center; box-shadow: 0 1px 2px rgba(15,23,42,.05); }
-    .part-card img { display: block; margin: 0 auto; width: 190px; height: 190px; border-radius: 4px; image-rendering: pixelated; }
-    .part-label { font-family: 'Courier New', monospace; font-size: 12.5px; font-weight: 700; margin-top: 10px; word-break: break-all; }
-    .part-seq { font-size: 11px; color: var(--muted); margin-top: 4px; }
-    .part-seq .num { color: var(--good); font-weight: 700; }
+    .parts-title { font-size: 13px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+    .parts-title .total { color: var(--good); }
 
-    @media (max-width: 520px) {
-      .case-banner { flex-direction: column; text-align: center; }
-      .cb-info { min-width: 0; }
-      .parts-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
-      .case-banner .qr-card img { width: 150px; height: 150px; }
-      .part-card img { width: 160px; height: 160px; }
+    .parts-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(165px, 1fr)); gap: 12px; }
+    .part-card { background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 12px; text-align: center; }
+    .part-card .num-badge { display: inline-block; background: var(--good-soft); color: var(--good); font-weight: 800; font-size: 12px; border-radius: 20px; padding: 2px 12px; margin-bottom: 10px; }
+    .part-card img { display: block; width: 140px; height: 140px; margin: 0 auto; border-radius: 6px; background: #fff; padding: 4px; border: 1px solid var(--line); image-rendering: pixelated; }
+    .part-label { font-family: 'Courier New', monospace; font-size: 12px; font-weight: 700; margin-top: 8px; word-break: break-all; }
+    .part-qty { font-size: 11px; color: var(--muted); margin-top: 2px; }
+    .part-qty b { color: var(--good); }
+
+    .foot { text-align: center; color: var(--muted); font-size: 12px; margin-top: 8px; line-height: 1.8; }
+    .jump { position: fixed; right: 14px; bottom: 14px; z-index: 30; }
+    .jump summary { list-style: none; cursor: pointer; background: linear-gradient(135deg,#0284c7,#0ea5e9); color:#fff; font-weight:800; border-radius:50%; width:54px; height:54px; display:flex; align-items:center; justify-content:center; font-size:22px; box-shadow:0 4px 14px rgba(2,132,199,.5); }
+    .jump[open] summary { position: relative; }
+    .jump .menu { position: absolute; right: 6px; bottom: 62px; background: var(--panel); border:1px solid var(--line); border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,.15); padding: 6px; min-width: 150px; }
+    .jump .menu a { display:block; padding: 8px 12px; text-decoration:none; color: var(--text); font-size: 13px; font-weight: 600; border-radius: 8px; }
+    .jump .menu a:hover { background: var(--accent-soft); color: var(--accent); }
+    .jump .menu a .c { color: var(--good); font-weight: 800; margin-right: 6px; }
+
+    @media (max-width: 600px) {
+      .case-qr img { width: 170px; height: 170px; margin: 0 auto; }
+      .case-row { justify-content: center; text-align: center; }
+      .case-instructions { min-width: 0; }
     }
   </style>
 </head>
 <body>
 
-  <div id="home">
-    <div class="brand">
-      <div class="logo">Q</div>
-      <div>
-        <h1>Shipment QR Scanner</h1>
-        <div class="tag">GMMYN26153N-0721 &middot; Shipment 134</div>
-      </div>
-    </div>
-    <div class="case-list" id="caseList"></div>
-    <div class="home-foot">Tap a case &rarr; scan the <b>case</b> QR first, then all <b>parts</b> below</div>
+  <div class="header">
+    <h1>Shipment QR - Full Sheet</h1>
+    <div class="sub">GMMYN26153N-0721 &middot; Shipment 134 &middot; <span class="count">7 cases &middot; 31 parts</span></div>
   </div>
 
-  <div id="detail">
-    <div class="detail-top">
-      <button class="iconbtn" id="backBtn">&#8592; All Cases</button>
-      <div class="detail-title" id="detailTitle">Case 1</div>
+  <div class="wrap">
+    <div class="legend">
+      Scan in order: <span class="bdg">CASE QR</span> of a case first, then each part with its <span class="bdg g">green number</span> below it (duplicate codes = scan twice).
     </div>
-    <div id="detailBody"></div>
+    <div id="cases"></div>
+    <div class="foot">7 cases &middot; scan case first, then parts in numbered order</div>
   </div>
+
+  <details class="jump" id="jumpBox">
+    <summary>☰</summary>
+    <div class="menu">
+      <a href="#case1"><span class="c">1</span>147F-H001_1</a><a href="#case2"><span class="c">2</span>147F-H001_2</a><a href="#case3"><span class="c">3</span>147F-H002_1</a><a href="#case4"><span class="c">4</span>147F-H002_2</a><a href="#case5"><span class="c">5</span>147G-H003_1</a><a href="#case6"><span class="c">6</span>147G-H003_2</a><a href="#case7"><span class="c">7</span>147G-H004_1</a>
+    </div>
+  </details>
 
   <script>
     var CASES = [{"code":"GMMYN26153N-0721-147F-H001_1","parts":["1013004105","1013004105","1018059449","1067001068","1067003260"]},{"code":"GMMYN26153N-0721-147F-H001_2","parts":["6600016395","6600016395","6600060213"]},{"code":"GMMYN26153N-0721-147F-H002_1","parts":["6600184215","6600199344","6606737057","6608216635","6608216635","8893199122"]},{"code":"GMMYN26153N-0721-147F-H002_2","parts":["8890065145","8890065211","6608072379"]},{"code":"GMMYN26153N-0721-147G-H003_1","parts":["8894068641","8894068641","8894117399","1013004105","1018059449"]},{"code":"GMMYN26153N-0721-147G-H003_2","parts":["JQ140DA0616FO","JQ1840616"]},{"code":"GMMYN26153N-0721-147G-H004_1","parts":["8893199122","6600199344","6600060213","1067003260","1067001068"]}];
@@ -92,79 +97,84 @@
     function imgEl(text, w, h) {
       var i = document.createElement('img');
       i.src = IMGS[text] || '';
-      i.width = w; i.height = h;
-      i.alt = text;
+      i.width = w; i.height = h; i.alt = text;
       return i;
     }
 
-    function buildHome() {
-      var list = document.getElementById('caseList');
+    function build() {
+      var root = document.getElementById('cases');
       CASES.forEach(function (c, i) {
-        var card = document.createElement('div');
-        card.className = 'case-card';
-        card.innerHTML = '<div class="case-num">' + (i + 1) + '</div><div class="case-info"><div class="case-code" title="' + c.code + '">' + c.code + '</div><div class="case-meta"><b>' + c.parts.length + '</b> parts &middot; ' + (c.parts.length + 1) + ' QRs</div></div>';
-        card.addEventListener('click', function () { openCase(i); });
-        list.appendChild(card);
+        var count = c.parts.length;
+
+        var block = document.createElement('div');
+        block.className = 'case-block';
+        block.id = 'case' + (i + 1);
+
+        var head = document.createElement('div');
+        head.className = 'case-head';
+        head.innerHTML =
+          '<div class="case-badge">Case ' + (i + 1) + '</div>' +
+          '<div class="case-code">' + c.code + '</div>' +
+          '<div class="case-count"><b>' + count + '</b><br>parts</div>';
+        block.appendChild(head);
+
+        var body = document.createElement('div');
+        body.className = 'case-body';
+
+        var row = document.createElement('div');
+        row.className = 'case-row';
+        var qrCol = document.createElement('div');
+        qrCol.className = 'case-qr';
+        qrCol.appendChild(imgEl(c.code, 200, 200));
+        var ql = document.createElement('div');
+        ql.className = 'case-qr-label';
+        ql.innerHTML = '<span class="badge">Scan this FIRST</span> &middot; Master Case';
+        qrCol.appendChild(ql);
+
+        var inst = document.createElement('div');
+        inst.className = 'case-instructions';
+        inst.innerHTML =
+          '<p><b>1.</b> Scan the <b>case QR</b> on the left to register this master case.</p>' +
+          '<p><b>2.</b> Then scan the <b>' + count + ' part QR' + (count === 1 ? '' : 's') + '</b> below in number order.</p>' +
+          '<p style="margin-top:6px;font-size:12px;">Total scans for this case: <b style="color:var(--good);">' + (count + 1) + '</b></p>';
+        row.appendChild(qrCol);
+        row.appendChild(inst);
+        body.appendChild(row);
+
+        var pt = document.createElement('div');
+        pt.className = 'parts-title';
+        pt.innerHTML = 'Parts <span class="total">(' + count + ')</span>';
+        body.appendChild(pt);
+
+        var grid = document.createElement('div');
+        grid.className = 'parts-grid';
+        c.parts.forEach(function (code, idx) {
+          var card = document.createElement('div');
+          card.className = 'part-card';
+          var nb = document.createElement('div');
+          nb.className = 'num-badge';
+          nb.textContent = 'Scan #' + (idx + 1);
+          card.appendChild(nb);
+          card.appendChild(imgEl(code, 140, 140));
+          var lbl = document.createElement('div');
+          lbl.className = 'part-label';
+          lbl.textContent = code;
+          card.appendChild(lbl);
+          var qt = document.createElement('div');
+          qt.className = 'part-qty';
+          var dup = c.parts.indexOf(code) !== idx;
+          qt.innerHTML = dup ? '<b>&#x2713;</b> duplicate code - scan twice' : 'part ' + (idx + 1) + ' / ' + count;
+          card.appendChild(qt);
+          grid.appendChild(card);
+        });
+        body.appendChild(grid);
+
+        block.appendChild(body);
+        root.appendChild(block);
       });
     }
 
-    function openCase(i) {
-      var c = CASES[i];
-      document.getElementById('home').style.display = 'none';
-      document.getElementById('detail').style.display = 'block';
-      document.getElementById('detailTitle').textContent = 'Case ' + (i + 1);
-      var body = document.getElementById('detailBody');
-      body.innerHTML = '';
-
-      var banner = document.createElement('div');
-      banner.className = 'case-banner';
-      var qrWrap = document.createElement('div');
-      qrWrap.className = 'qr-card';
-      qrWrap.appendChild(imgEl(c.code, 180, 180));
-      var info = document.createElement('div');
-      info.className = 'cb-info';
-      info.innerHTML = '<div class="cb-badge">Scan Master Case First</div><div class="cb-code">' + c.code + '</div><div class="cb-hint">Scan this code to register the case, then scan the ' + c.parts.length + ' part(s) below.</div>';
-      banner.appendChild(qrWrap);
-      banner.appendChild(info);
-      body.appendChild(banner);
-
-      var title = document.createElement('div');
-      title.className = 'section-title';
-      title.innerHTML = 'Parts to scan <b>' + c.parts.length + '</b>';
-      body.appendChild(title);
-
-      var grid = document.createElement('div');
-      grid.className = 'parts-grid';
-      c.parts.forEach(function (code, idx) {
-        var card = document.createElement('div');
-        card.className = 'part-card';
-        card.appendChild(imgEl(code, 190, 190));
-        var lbl = document.createElement('div');
-        lbl.className = 'part-label';
-        lbl.textContent = code;
-        var seq = document.createElement('div');
-        seq.className = 'part-seq';
-        seq.innerHTML = 'Scan <span class="num">#' + (idx + 1) + '</span> of ' + c.parts.length;
-        card.appendChild(lbl);
-        card.appendChild(seq);
-        grid.appendChild(card);
-      });
-      body.appendChild(grid);
-      window.scrollTo(0, 0);
-    }
-
-    function goHome() {
-      document.getElementById('detail').style.display = 'none';
-      document.getElementById('home').style.display = 'block';
-      window.scrollTo(0, 0);
-    }
-
-    document.getElementById('backBtn').addEventListener('click', goHome);
-    buildHome();
-    if (window.location.hash) {
-      var h = parseInt(window.location.hash.replace(/^#case/, ''), 10);
-      if (h >= 1 && h <= CASES.length) openCase(h - 1);
-    }
+    build();
   </script>
 </body>
 </html>
