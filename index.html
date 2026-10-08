@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shipment 0721 - QR Scanner</title>
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --card2: #e2e8f0;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --accent: #38bdf8;
+      --accent2: #0284c7;
+      --good: #4ade80;
+      --danger: #f87171;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding-bottom: 40px;
+    }
+    .topbar {
+      background: linear-gradient(135deg, #0c4a6e, #164e63);
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.4);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .topbar .brand { display: flex; align-items: center; gap: 12px; }
+    .topbar h1 { font-size: 20px; font-weight: 700; letter-spacing: 0.5px; }
+    .topbar .sub { font-size: 12px; color: #bae6fd; opacity: 0.9; }
+    .back-btn {
+      background: rgba(255,255,255,0.12);
+      border: none;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      gap: 6px;
+    }
+    .back-btn:hover { background: rgba(255,255,255,0.22); }
+
+    .wrap { max-width: 1100px; margin: 0 auto; padding: 20px; }
+    .page-title { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+    .page-sub { color: var(--muted); font-size: 14px; margin-bottom: 24px; }
+
+    /* Home grid */
+    #homeView .case-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+    }
+    .case-card {
+      background: var(--card);
+      border: 1px solid #334155;
+      border-radius: 14px;
+      padding: 20px;
+      cursor: pointer;
+      transition: transform 0.15s, border-color 0.15s;
+      text-align: left;
+    }
+    .case-card:hover { transform: translateY(-3px); border-color: var(--accent); }
+    .case-card .case-badge {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #0c4a6e;
+      background: var(--accent);
+      padding: 4px 10px;
+      border-radius: 20px;
+      display: inline-block;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+    .case-card .case-code {
+      font-family: 'Courier New', monospace;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      word-break: break-all;
+      line-height: 1.3;
+      margin-bottom: 8px;
+    }
+    .case-card .case-meta { color: var(--muted); font-size: 13px; }
+
+    /* Detail view */
+    #detailView { display: none; }
+    .scan-stage { text-align: center; }
+    .stage-badge {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #0c4a6e;
+      background: var(--accent);
+      padding: 6px 16px;
+      border-radius: 20px;
+      display: inline-block;
+      margin-bottom: 4px;
+    }
+    .stage-badge.part { background: var(--good); }
+    .stage-count { color: var(--muted); font-size: 14px; margin-bottom: 20px; }
+
+    .qr-frame {
+      background: #fff;
+      border-radius: 18px;
+      padding: 22px;
+      display: inline-block;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+      margin-bottom: 16px;
+    }
+    .qr-frame canvas, .qr-frame img { display: block; border-radius: 6px; }
+    .qr-code-text {
+      font-family: 'Courier New', monospace;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+      background: #0b1220;
+      border: 1px solid #334155;
+      padding: 10px 20px;
+      border-radius: 10px;
+      display: inline-block;
+      margin-bottom: 6px;
+      word-break: break-all;
+      max-width: 90%;
+    }
+    .qr-hint { color: var(--muted); font-size: 13px; margin-bottom: 24px; }
+
+    .nav-btns { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; margin-bottom: 28px; }
+    .primary-btn {
+      background: linear-gradient(135deg, var(--accent2), var(--accent));
+      border: none;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 700;
+      padding: 14px 30px;
+      border-radius: 12px;
+      cursor: pointer;
+      min-width: 140px;
+    }
+    .primary-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+    .secondary-btn {
+      background: #334155;
+      border: 1px solid #475569;
+      color: var(--text);
+      font-size: 16px;
+      font-weight: 600;
+      padding: 14px 26px;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+    .secondary-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+    /* Sequence strip */
+    .seq-title { text-align: center; color: var(--muted); font-size: 13px; margin-bottom: 10px; letter-spacing: 1px; text-transform: uppercase; }
+    .seq-strip {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding: 8px 4px 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .seq-chip {
+      background: var(--card);
+      border: 2px solid #334155;
+      border-radius: 10px;
+      padding: 8px 12px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      text-align: center;
+      min-width: 90px;
+      color: var(--muted);
+      transition: all 0.15s;
+    }
+    .seq-chip .seq-order { display: block; font-size: 10px; letter-spacing: 1px; opacity: 0.7; margin-bottom: 3px; }
+    .seq-chip.active { border-color: var(--accent); color: #fff; background: #0c4a6e; }
+    .seq-chip.done { border-color: var(--good); color: var(--good); }
+
+    .foot-note { text-align: center; color: var(--muted); font-size: 12px; margin-top: 30px; }
+    @media (max-width: 600px) {
+      .qr-frame { padding: 14px; }
+      .qr-frame canvas, .qr-frame img { width: 240px !important; height: 240px !important; }
+      .case-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="brand">
+      <div>
+        <h1>Shipment QR Scanner</h1>
+        <div class="sub">GMMYN26153N-0721 · 7 cases</div>
+      </div>
+    </div>
+    <button class="back-btn" id="backBtn">&#8592; All Cases</button>
+  </div>
+
+  <!-- HOME -->
+  <div class="wrap" id="homeView">
+    <div class="page-title">Select a Case to Scan</div>
+    <div class="page-sub">Scan the <b>case QR first</b>, then each part in order.</div>
+    <div class="case-grid" id="caseGrid"></div>
+  </div>
+
+  <!-- DETAIL -->
+  <div class="wrap" id="detailView">
+    <div class="scan-stage">
+      <div class="stage-badge" id="stageBadge">Case</div>
+      <div class="stage-count" id="stageCount">1 / 6</div>
+      <div class="qr-frame"><div id="qrBox"></div></div>
+      <div class="qr-code-text" id="qrText"></div>
+      <div class="qr-hint" id="qrHint">Scan this code to register the master case.</div>
+      <div class="nav-btns">
+        <button class="secondary-btn" id="prevBtn">&#8592; Prev</button>
+        <button class="primary-btn" id="nextBtn">Next &#8594;</button>
+      </div>
+    </div>
+    <div class="seq-title">Scan Order</div>
+    <div class="seq-strip" id="seqStrip"></div>
+  </div>
+
+  <div class="foot-note">Tap a case to begin &middot; Scan Case &rarr; Parts</div>
+
+  <script>
+    var CASES = [
+      {
+        code: 'GMMYN26153N-0721-147F-H001_1',
+        parts: ['1013004105', '1013004105', '1018059449', '1067001068', '1067003260']
+      },
+      {
+        code: 'GMMYN26153N-0721-147F-H001_2',
+        parts: ['6600016395', '6600016395', '6600060213']
+      },
+      {
+        code: 'GMMYN26153N-0721-147F-H002_1',
+        parts: ['6600184215', '6600199344', '6606737057', '6608216635', '6608216635', '8893199122']
+      },
+      {
+        code: 'GMMYN26153N-0721-147F-H002_2',
+        parts: ['8890065145', '8890065211', '6608072379']
+      },
+      {
+        code: 'GMMYN26153N-0721-147G-H003_1',
+        parts: ['8894068641', '8894068641', '8894117399', '1013004105', '1018059449']
+      },
+      {
+        code: 'GMMYN26153N-0721-147G-H003_2',
+        parts: ['JQ140DA0616FO', 'JQ1840616']
+      },
+      {
+        code: 'GMMYN26153N-0721-147G-H004_1',
+        parts: ['8893199122', '6600199344', '6600060213', '1067003260', '1067001068']
+      }
+    ];
+
+    var QR_SIZE = 320;
+    var currentCase = null;
+    var currentIndex = 0;
+    var qrInstance = null;
+
+    function buildGrid() {
+      var grid = document.getElementById('caseGrid');
+      grid.innerHTML = '';
+      CASES.forEach(function (c, i) {
+        var card = document.createElement('div');
+        card.className = 'case-card';
+        card.innerHTML =
+          '<div class="case-badge">Case ' + (i + 1) + '</div>' +
+          '<div class="case-code">' + c.code + '</div>' +
+          '<div class="case-meta">' + c.parts.length + ' parts to scan</div>';
+        card.addEventListener('click', function () { openCase(i); });
+        grid.appendChild(card);
+      });
+    }
+
+    function openCase(index) {
+      currentCase = index;
+      currentIndex = 0;
+      document.getElementById('homeView').style.display = 'none';
+      document.getElementById('detailView').style.display = 'block';
+      document.getElementById('backBtn').style.display = 'inline-flex';
+      document.querySelector('.topbar .sub').textContent = 'Case ' + (index + 1) + ' of ' + CASES.length;
+      renderStep();
+    }
+
+    function goHome() {
+      document.getElementById('homeView').style.display = 'block';
+      document.getElementById('detailView').style.display = 'none';
+      document.getElementById('backBtn').style.display = 'none';
+      document.querySelector('.topbar .sub').textContent = 'GMMYN26153N-0721 \u00b7 ' + CASES.length + ' cases';
+      window.scrollTo(0, 0);
+    }
+
+    function getItems() {
+      var c = CASES[currentCase];
+      var items = [{ type: 'case', text: c.code }];
+      c.parts.forEach(function (p) { items.push({ type: 'part', text: p }); });
+      return items;
+    }
+
+    function renderStep() {
+      var items = getItems();
+      var total = items.length;
+      var item = items[currentIndex];
+
+      var badge = document.getElementById('stageBadge');
+      badge.textContent = item.type === 'case' ? 'CASE' : 'Part ' + currentIndex + ' of ' + (total - 1);
+      badge.className = 'stage-badge' + (item.type === 'part' ? ' part' : '');
+
+      document.getElementById('stageCount').textContent =
+        'Step ' + (currentIndex + 1) + ' of ' + total;
+
+      document.getElementById('qrHint').textContent =
+        item.type === 'case'
+          ? 'Scan this code to register the master case.'
+          : 'Scan this code to register the part.';
+
+      document.getElementById('qrText').textContent = item.text;
+
+      var box = document.getElementById('qrBox');
+      box.innerHTML = '';
+      qrInstance = new QRCode(box, {
+        text: item.text,
+        width: QR_SIZE,
+        height: QR_SIZE,
+        correctLevel: QRCode.CorrectLevel.H
+      });
+
+      document.getElementById('prevBtn').disabled = currentIndex === 0;
+      document.getElementById('nextBtn').textContent =
+        currentIndex === total - 1 ? 'Done \u2713' : 'Next \u2192';
+
+      renderStrip(items);
+      var nextBtn = document.getElementById('nextBtn');
+      nextBtn.disabled = false;
+      nextBtn.onclick = function () {
+        if (currentIndex < total - 1) { currentIndex++; renderStep(); }
+        else { goHome(); }
+      };
+      document.getElementById('prevBtn').onclick = function () {
+        if (currentIndex > 0) { currentIndex--; renderStep(); }
+      };
+    }
+
+    function renderStrip(items) {
+      var strip = document.getElementById('seqStrip');
+      strip.innerHTML = '';
+      items.forEach(function (item, i) {
+        var chip = document.createElement('div');
+        chip.className = 'seq-chip';
+        if (i === currentIndex) chip.className += ' active';
+        else if (i < currentIndex) chip.className += ' done';
+        chip.innerHTML =
+          '<span class="seq-order">' + (i === 0 ? 'CASE' : 'PART ' + i) + '</span>' +
+          item.text;
+        chip.addEventListener('click', function () {
+          currentIndex = i;
+          renderStep();
+        });
+        strip.appendChild(chip);
+      });
+    }
+
+    document.getElementById('backBtn').addEventListener('click', goHome);
+
+    buildGrid();
+
+    if (window.location.hash) {
+      var h = parseInt(window.location.hash.replace('#case', ''), 10);
+      if (!isNaN(h) && h >= 1 && h <= CASES.length) openCase(h - 1);
+    }
+  </script>
+</body>
+</html>
