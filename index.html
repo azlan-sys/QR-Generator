@@ -16,19 +16,18 @@
       --accent-soft: #e0f2fe;
       --good: #16a34a;
       --good-soft: #dcfce7;
-      --dark: #0f172a;
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    html, body { height: 100%; }
     body {
       font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
       background: var(--bg);
       color: var(--text);
       -webkit-tap-highlight-color: transparent;
+      padding-bottom: 50px;
     }
 
     /* ---------- HOME ---------- */
-    #home { max-width: 900px; margin: 0 auto; padding: 14px 14px 60px; }
+    #home { max-width: 900px; margin: 0 auto; padding: 14px 14px 50px; }
     .brand { display: flex; align-items: center; gap: 10px; padding: 6px 4px 14px; }
     .brand .logo {
       width: 40px; height: 40px; border-radius: 12px;
@@ -61,109 +60,62 @@
     .case-info { min-width: 0; flex: 1; }
     .case-code {
       font-family: 'Courier New', monospace;
-      font-size: 13.5px; font-weight: 700; letter-spacing: -.2px;
+      font-size: 13.5px; font-weight: 700;
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
     .case-meta { font-size: 12px; color: var(--muted); margin-top: 3px; }
     .case-meta b { color: var(--good); }
-
     .home-foot { text-align: center; color: var(--muted); font-size: 12px; margin-top: 26px; }
     .home-foot b { color: var(--accent); }
 
-    /* ---------- SCAN DETAIL ---------- */
-    #scan {
-      display: none;
-      position: fixed; inset: 0;
-      background: var(--dark);
-      color: #f1f5f9;
-      z-index: 20;
+    /* ---------- CASE DETAIL ---------- */
+    #detail { display: none; max-width: 1000px; margin: 0 auto; padding: 0 12px 40px; }
+    .detail-top {
+      position: sticky; top: 0; z-index: 10;
+      background: rgba(248,250,252,.95);
+      backdrop-filter: blur(6px);
+      padding: 10px 2px;
+      display: flex; align-items: center; gap: 10px;
     }
-    .scan-inner {
-      max-width: 520px; margin: 0 auto; padding: 12px;
-      height: 100%; display: flex; flex-direction: column;
-    }
-
-    .scan-top { display: flex; align-items: center; gap: 10px; padding: 6px 2px 0; }
     .iconbtn {
-      background: #1e293b; border: 1px solid #334155; color: #e2e8f0;
+      background: #fff; border: 1px solid var(--line); color: var(--text);
       border-radius: 10px; padding: 9px 14px; cursor: pointer;
       font-size: 14px; font-weight: 600; flex-shrink: 0;
+      box-shadow: 0 1px 2px rgba(15,23,42,.05);
     }
-    .iconbtn:hover { background: #334155; }
-    .scan-title { text-align: center; font-size: 15px; font-weight: 700; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .iconbtn:hover { border-color: var(--accent); color: var(--accent); }
+    .detail-title { text-align: center; font-size: 15px; font-weight: 700; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-    /* progress bar */
-    .prog-track { background: #1e293b; border-radius: 20px; height: 10px; margin-top: 12px; overflow: hidden; }
-    .prog-fill {
-      height: 100%; width: 0%;
-      background: linear-gradient(90deg, #0284c7, #38bdf8);
-      border-radius: 20px; transition: width .25s ease;
+    .case-banner {
+      background: linear-gradient(135deg, #0f172a, #1e3a5f);
+      color: #fff; border-radius: 16px; padding: 16px;
+      display: flex; align-items: center; gap: 18px; flex-wrap: wrap;
+      margin-bottom: 18px;
     }
+    .case-banner .qr-card { background: #fff; border-radius: 12px; padding: 10px; flex-shrink: 0; }
+    .case-banner .qr-card canvas, .case-banner .qr-card img { display: block; border-radius: 4px; }
+    .cb-info { flex: 1; min-width: 200px; }
+    .cb-badge { display: inline-block; background: #0ea5e9; color: #082f49; font-size: 11px; font-weight: 800; letter-spacing: 1.5px; padding: 4px 12px; border-radius: 20px; text-transform: uppercase; margin-bottom: 8px; }
+    .cb-code { font-family: 'Courier New', monospace; font-size: 16px; font-weight: 700; word-break: break-all; line-height: 1.3; }
+    .cb-hint { font-size: 12px; color: #94a3b8; margin-top: 8px; }
 
-    .stage-num { font-size: 13px; color: #94a3b8; text-align: center; margin-top: 8px; letter-spacing: .5px; }
-    .stage-num b { color: #f1f5f9; }
-    .stage-num .pill {
-      display: inline-block; padding: 3px 12px; border-radius: 20px;
-      font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
-      margin-right: 8px;
-    }
-    .pill.case { background: #0ea5e9; color: #082f49; }
-    .pill.part { background: #4ade80; color: #052e16; }
+    .section-title { font-size: 14px; font-weight: 700; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin: 18px 0 10px; }
+    .section-title b { color: var(--good); }
 
-    .qr-wrap { flex: 1; display: flex; align-items: center; justify-content: center; padding: 6px 0; min-height: 0; }
-    .qr-card {
-      background: #fff; border-radius: 16px; padding: 14px;
-      box-shadow: 0 10px 30px rgba(0,0,0,.45);
+    .parts-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+    .part-card {
+      background: var(--panel); border: 1px solid var(--line); border-radius: 14px;
+      padding: 14px; text-align: center; box-shadow: 0 1px 2px rgba(15,23,42,.05);
     }
-    .qr-card canvas, .qr-card img { display: block; border-radius: 6px; }
+    .part-card canvas, .part-card img { display: block; margin: 0 auto; border-radius: 4px; }
+    .part-label { font-family: 'Courier New', monospace; font-size: 12.5px; font-weight: 700; margin-top: 10px; word-break: break-all; }
+    .part-seq { font-size: 11px; color: var(--muted); margin-top: 4px; }
+    .part-seq .num { color: var(--good); font-weight: 700; }
 
-    .qr-label { text-align: center; }
-    .qr-label .stage-hint { font-size: 12px; color: #94a3b8; margin-bottom: 4px; }
-    .qr-label .codetext {
-      font-family: 'Courier New', monospace; font-weight: 700;
-      font-size: 17px; letter-spacing: -.3px; color: #fff;
-      background: #1e293b; border-radius: 10px; padding: 8px 14px;
-      display: inline-block; max-width: 100%; word-break: break-all;
-    }
-
-    /* nav */
-    .nav-row { display: flex; gap: 10px; padding: 10px 0 6px; }
-    .btn {
-      border: none; border-radius: 14px; cursor: pointer;
-      font-size: 16px; font-weight: 700; padding: 15px;
-      display: flex; align-items: center; justify-content: center; gap: 8px;
-      transition: transform .1s, filter .1s;
-    }
-    .btn:active { transform: scale(.97); }
-    .btn:disabled { opacity: .35; cursor: not-allowed; }
-    .btn-prev { background: #1e293b; color: #e2e8f0; flex: 0 0 90px; border: 1px solid #334155; }
-    .btn-next {
-      background: linear-gradient(135deg, #0ea5e9, #0284c7); color: #fff; flex: 1;
-      font-size: 18px;
-    }
-    .btn-done { background: var(--good); color: #fff; flex: 1; font-size: 18px; }
-
-    /* finder dots */
-    .finder-title { text-align: center; font-size: 11px; color: #64748b; letter-spacing: 1.5px; text-transform: uppercase; padding-top: 4px; }
-    .finder {
-      display: flex; gap: 6px; overflow-x: auto; padding: 8px 2px 10px;
-      -webkit-overflow-scrolling: touch;
-    }
-    .dot {
-      flex: 0 0 auto; border-radius: 9px; padding: 5px 0;
-      width: 40px; text-align: center; cursor: pointer;
-      background: #1e293b; border: 2px solid #334155;
-      font-size: 11px; font-weight: 700; color: #64748b;
-    }
-    .dot span { display: block; font-size: 14px; letter-spacing: -1px; }
-    .dot.active { background: #0ea5e9; border-color: #38bdf8; color: #082f49; }
-    .dot.done { background: #14532d; border-color: #16a34a; color: #4ade80; }
-    .dot .dot-sub { font-size: 8.5px; color: inherit; opacity: .85; letter-spacing: 0; font-family: 'Courier New', monospace; overflow: hidden; }
-    .dot.active .dot-sub, .dot.done .dot-sub { color: inherit; }
-
-    @media (max-width: 420px) {
-      .qr-card { padding: 10px; }
-      .codetext { font-size: 15px; }
+    @media (max-width: 520px) {
+      .case-banner { flex-direction: column; text-align: center; }
+      .cb-info { min-width: 0; }
+      .parts-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
     }
   </style>
 </head>
@@ -179,36 +131,16 @@
       </div>
     </div>
     <div class="case-list" id="caseList"></div>
-    <div class="home-foot">Tap a case &rarr; scan <b>case</b> first, then <b>each part</b></div>
+    <div class="home-foot">Tap a case &rarr; scan the <b>case</b> QR first, then all <b>parts</b> below</div>
   </div>
 
-  <!-- SCAN -->
-  <div id="scan">
-    <div class="scan-inner">
-      <div class="scan-top">
-        <button class="iconbtn" id="backBtn">&#8592; Cases</button>
-        <div class="scan-title" id="scanTitle">Case 1</div>
-      </div>
-      <div class="prog-track"><div class="prog-fill" id="progFill"></div></div>
-      <div class="stage-num" id="stageNum"></div>
-
-      <div class="qr-wrap">
-        <div class="qr-card"><div id="qrBox"></div></div>
-      </div>
-
-      <div class="qr-label">
-        <div class="stage-hint" id="stageHint"></div>
-        <div class="codetext" id="qrText"></div>
-      </div>
-
-      <div class="nav-row">
-        <button class="btn btn-prev" id="prevBtn">&#8592; Prev</button>
-        <button class="btn btn-next" id="nextBtn">Next &rarr;</button>
-      </div>
-
-      <div class="finder-title">Scan order &mdash; tap to jump</div>
-      <div class="finder" id="finder"></div>
+  <!-- DETAIL -->
+  <div id="detail">
+    <div class="detail-top">
+      <button class="iconbtn" id="backBtn">&#8592; All Cases</button>
+      <div class="detail-title" id="detailTitle">Case 1</div>
     </div>
+    <div id="detailBody"></div>
   </div>
 
   <script>
@@ -222,13 +154,12 @@
       { code: 'GMMYN26153N-0721-147G-H004_1', parts: ['8893199122','6600199344','6600060213','1067003260','1067001068'] }
     ];
 
-    var curCase = -1, curStep = 0, qr = null;
-    var QR_SIZE = 280;
+    var QRS = {}; // cache by text
 
-    function itemsFor(i) {
-      var items = [{ type: 'case', text: CASES[i].code }];
-      CASES[i].parts.forEach(function (p) { items.push({ type: 'part', text: p }); });
-      return items;
+    function makeQR(text, size) {
+      var holder = document.createElement('div');
+      new QRCode(holder, { text: text, width: size, height: size, correctLevel: QRCode.CorrectLevel.H });
+      return holder.firstChild;
     }
 
     function buildHome() {
@@ -241,7 +172,7 @@
           '<div class="case-num">' + (i + 1) + '</div>' +
           '<div class="case-info">' +
             '<div class="case-code" title="' + c.code + '">' + c.code + '</div>' +
-            '<div class="case-meta"><b>' + c.parts.length + '</b> parts &middot; ' + (c.parts.length + 1) + ' scans</div>' +
+            '<div class="case-meta"><b>' + c.parts.length + '</b> parts &middot; ' + (c.parts.length + 1) + ' QRs</div>' +
           '</div>';
         card.addEventListener('click', function () { openCase(i); });
         list.appendChild(card);
@@ -249,78 +180,61 @@
     }
 
     function openCase(i) {
-      curCase = i; curStep = 0;
+      var c = CASES[i];
       document.getElementById('home').style.display = 'none';
-      document.getElementById('scan').style.display = 'block';
-      document.getElementById('scanTitle').textContent = 'Case ' + (i + 1);
-      renderStep();
-    }
+      document.getElementById('detail').style.display = 'block';
+      document.getElementById('detailTitle').textContent = 'Case ' + (i + 1);
 
-    function goHome() {
-      document.getElementById('scan').style.display = 'none';
-      document.getElementById('home').style.display = 'block';
+      var body = document.getElementById('detailBody');
+      body.innerHTML = '';
+
+      // Case banner (case QR first, larger)
+      var banner = document.createElement('div');
+      banner.className = 'case-banner';
+      var qrWrap = document.createElement('div');
+      qrWrap.className = 'qr-card';
+      qrWrap.appendChild(makeQR(c.code, 180));
+      var info = document.createElement('div');
+      info.className = 'cb-info';
+      info.innerHTML =
+        '<div class="cb-badge">Scan Master Case First</div>' +
+        '<div class="cb-code">' + c.code + '</div>' +
+        '<div class="cb-hint">Scan this code to register the case, then scan the ' + c.parts.length + ' part(s) below.</div>';
+      banner.appendChild(qrWrap);
+      banner.appendChild(info);
+      body.appendChild(banner);
+
+      // Parts section
+      var title = document.createElement('div');
+      title.className = 'section-title';
+      title.innerHTML = 'Parts to scan <b>' + c.parts.length + '</b>';
+      body.appendChild(title);
+
+      var grid = document.createElement('div');
+      grid.className = 'parts-grid';
+      c.parts.forEach(function (code, idx) {
+        var card = document.createElement('div');
+        card.className = 'part-card';
+        card.appendChild(makeQR(code, 190));
+        var lbl = document.createElement('div');
+        lbl.className = 'part-label';
+        lbl.textContent = code;
+        var seq = document.createElement('div');
+        seq.className = 'part-seq';
+        seq.innerHTML = 'Scan <span class="num">#' + (idx + 1) + '</span> of ' + c.parts.length;
+        card.appendChild(lbl);
+        card.appendChild(seq);
+        grid.appendChild(card);
+      });
+      body.appendChild(grid);
+
       window.scrollTo(0, 0);
     }
 
-    function renderStep() {
-      var items = itemsFor(curCase);
-      var total = items.length;
-      var item = items[curStep];
-      var isCase = item.type === 'case';
-
-      var fill = document.getElementById('progFill');
-      fill.style.width = ((curStep / (total - 1)) * 100) + '%';
-
-      document.getElementById('stageNum').innerHTML =
-        '<span class="pill ' + (isCase ? 'case' : 'part') + '">' + (isCase ? 'Case' : 'Part ' + curStep) + '</span>' +
-        'Step <b>' + (curStep + 1) + '</b> of ' + total;
-
-      document.getElementById('stageHint').textContent =
-        isCase ? 'Scan the master case first' : 'Scan this part';
-
-      document.getElementById('qrText').textContent = item.text;
-      document.getElementById('qrText').title = item.text;
-
-      var box = document.getElementById('qrBox');
-      box.innerHTML = '';
-      qr = new QRCode(box, { text: item.text, width: QR_SIZE, height: QR_SIZE, correctLevel: QRCode.CorrectLevel.H });
-
-      document.getElementById('prevBtn').disabled = curStep === 0;
-
-      var next = document.getElementById('nextBtn');
-      if (curStep === total - 1) {
-        next.className = 'btn btn-done';
-        next.innerHTML = 'All Scanned &#10003;';
-        next.onclick = goHome;
-      } else {
-        next.className = 'btn btn-next';
-        next.innerHTML = 'Next &rarr;';
-        next.onclick = function () { curStep++; renderStep(); };
-      }
-
-      document.getElementById('prevBtn').onclick = function () {
-        if (curStep > 0) { curStep--; renderStep(); }
-      };
-
-      renderFinder(items, total);
-      var dots = document.querySelectorAll('.finder .dot');
-      if (dots[curStep]) dots[curStep].scrollIntoView({ inline: 'center', block: 'nearest' });
-    }
-
-    function renderFinder(items, total) {
-      var f = document.getElementById('finder');
-      f.innerHTML = '';
-      items.forEach(function (item, i) {
-        var d = document.createElement('div');
-        d.className = 'dot';
-        if (i === curStep) d.className += ' active';
-        else if (i < curStep) d.className += ' done';
-        var label = item.type === 'case' ? 'CASE' : 'P' + i;
-        d.innerHTML = '<span>' + label + '</span><div class="dot-sub">' + (item.type === 'case' ? 'M' : item.text.replace(/\D/g, '').slice(-3)) + '</div>';
-        d.title = item.text;
-        d.addEventListener('click', function () { curStep = i; renderStep(); });
-        f.appendChild(d);
-      });
+    function goHome() {
+      document.getElementById('detail').style.display = 'none';
+      document.getElementById('home').style.display = 'block';
+      window.scrollTo(0, 0);
     }
 
     document.getElementById('backBtn').addEventListener('click', goHome);
